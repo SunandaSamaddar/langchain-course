@@ -13,45 +13,45 @@ from langchain_tavily import TavilySearch
 # from tavily import TavilyClient
 
 
-# class Source(BaseModel):
-#     """Schema for a source used by the agent"""
+class Source(BaseModel):
+    """Schema for a source used by the agent"""
 
-#     url: str = Field(description="The URL of the source")
-
-
-# class AgentResponse(BaseModel):
-#     """Schema for agent response with answer and sources"""
-
-#     answer: str = Field(description="Thr agent's answer to the query")
-#     sources: List[Source] = Field(
-#         default_factory=list, description="List of sources used to generate the answer"
-#     )
-
-llm = ChatOpenAI(model="gpt-5")
-# llm = ChatOpenAI(model="gpt-5-nano-2025-08-07")
-tools = [TavilySearch()]
-agent = create_agent(model=llm, tools=tools)
-
-tavily = TavilyClient()
-
-@tool
-def search(query: str) -> str:
-    """
-    Tool that searches over the internet for information.
-    Args:
-        query: The query to search for.
-    Returns:
-        The search result.
-    """
-    print(f"Searching for {query}")
-    # print("Kolkata weather is sunny")
-    # print("Tokyo weather is sunny")
-    return tavily.search(query=query)
+    url: str = Field(description="The URL of the source")
 
 
+class AgentResponse(BaseModel):
+    """Schema for agent response with answer and sources"""
+
+    answer: str = Field(description="The agent's answer to the query")
+    sources: List[Source] = Field(
+        default_factory=list, description="List of sources used to generate the answer"
+    )
+
+# llm = ChatOpenAI(model="gpt-5")
 llm = ChatOpenAI(model="gpt-5-nano-2025-08-07")
-tools = [search]
-agent = create_agent(model=llm, tools=tools)
+tools = [TavilySearch()]
+agent = create_agent(model=llm, tools=tools, response_format=AgentResponse)  # The Agent now must return an AgentResponse object not string
+
+# tavily = TavilyClient()
+
+# @tool
+# def search(query: str) -> str:
+#     """
+#     Tool that searches over the internet for information.
+#     Args:
+#         query: The query to search for.
+#     Returns:
+#         The search result.
+#     """
+#     print(f"Searching for {query}")
+#     # print("Kolkata weather is sunny")
+#     # print("Tokyo weather is sunny")
+#     return tavily.search(query=query)
+
+
+# llm = ChatOpenAI(model="gpt-5-nano-2025-08-07")
+# tools = [search]
+# agent = create_agent(model=llm, tools=tools)
 
 
 def main():
